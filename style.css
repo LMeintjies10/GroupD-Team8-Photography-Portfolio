@@ -1,15 +1,19 @@
+
 /* FRAME Photography Portfolio
-   Responsive styles for desktop, tablet and mobile
+   Dark editorial theme with responsive layouts
 */
 
 :root {
-    --color-bg: #f5f2ec;
-    --color-paper: #fffdf9;
-    --color-text: #22231f;
-    --color-muted: #77776f;
-    --color-accent: #a45f43;
-    --color-line: #dedbd3;
-    --color-image-bg: #ded7cd;
+    --color-bg: #171817;
+    --color-paper: #242624;
+    --color-text: #f5f1e8;
+    --color-muted: #b8b8af;
+    --color-accent: #d09a78;
+    --color-line: #383a36;
+    --color-image-bg: #292b29;
+    --color-contact: #222421;
+    --color-input-border: #484a45;
+    --color-accent-hover: #e1b294;
 
     --font-body: "DM Sans", sans-serif;
     --font-display: "Playfair Display", Georgia, serif;
@@ -74,7 +78,7 @@ textarea:focus-visible {
 
 ::selection {
     background: var(--color-accent);
-    color: white;
+    color: var(--color-bg);
 }
 
 .container {
@@ -107,12 +111,6 @@ textarea:focus-visible {
     font-weight: 500;
 }
 
-.section-intro {
-    max-width: 470px;
-    margin: 18px 0 0;
-    color: var(--color-muted);
-}
-
 .text-link {
     display: inline-flex;
     align-items: center;
@@ -128,6 +126,12 @@ textarea:focus-visible {
 
 .text-link:hover {
     color: var(--color-accent);
+}
+
+.section-intro {
+    max-width: 470px;
+    margin: 18px 0 0;
+    color: var(--color-muted);
 }
 
 /* Header and navigation */
@@ -225,7 +229,7 @@ textarea:focus-visible {
 
 .nav-links .nav-cta:hover {
     background: var(--color-text);
-    color: white;
+    color: var(--color-bg);
 }
 
 /* Hero section */
@@ -287,8 +291,8 @@ textarea:focus-visible {
     justify-content: center;
     gap: 20px;
     padding: 0 23px;
-    background: var(--color-text);
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-bg);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.09em;
@@ -297,7 +301,7 @@ textarea:focus-visible {
 }
 
 .primary-link:hover {
-    background: var(--color-accent);
+    background: var(--color-accent-hover);
     transform: translateY(-2px);
 }
 
@@ -383,7 +387,7 @@ textarea:focus-visible {
     position: absolute;
     z-index: 1;
     inset: 35% 0 0;
-    background: linear-gradient(transparent, rgb(0 0 0 / 65%));
+    background: linear-gradient(transparent, rgb(0 0 0 / 75%));
     content: "";
     opacity: 0.9;
     transition: opacity var(--transition);
@@ -492,6 +496,7 @@ textarea:focus-visible {
     bottom: 25px;
     padding: 12px 17px;
     background: var(--color-paper);
+    color: var(--color-text);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -514,12 +519,12 @@ textarea:focus-visible {
     margin-top: 15px;
 }
 
-/* Contact and booking form */
+/* Contact section and booking form */
 
 .contact {
     margin-top: clamp(100px, 15vw, 180px);
     padding-block: clamp(65px, 9vw, 120px);
-    background: #e9e4db;
+    background: var(--color-contact);
 }
 
 .contact-layout {
@@ -540,7 +545,7 @@ textarea:focus-visible {
 .contact-detail {
     margin-top: 36px;
     padding-top: 20px;
-    border-top: 1px solid #d0c9be;
+    border-top: 1px solid var(--color-input-border);
 }
 
 .contact-detail p {
@@ -554,6 +559,11 @@ textarea:focus-visible {
 .contact-detail a {
     font-size: 14px;
     overflow-wrap: anywhere;
+    transition: color var(--transition);
+}
+
+.contact-detail a:hover {
+    color: var(--color-accent);
 }
 
 .contact-form {
@@ -586,7 +596,7 @@ textarea:focus-visible {
     width: 100%;
     min-width: 0;
     padding: 13px 14px;
-    border: 1px solid #d2ccc2;
+    border: 1px solid var(--color-input-border);
     border-radius: 0;
     background: var(--color-paper);
     color: var(--color-text);
@@ -605,7 +615,7 @@ textarea:focus-visible {
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-    color: #99958d;
+    color: #aaa99f;
 }
 
 .form-field input:focus,
@@ -614,23 +624,29 @@ textarea:focus-visible {
     border-color: var(--color-accent);
 }
 
+.form-field select option {
+    background: var(--color-paper);
+    color: var(--color-text);
+}
+
 .form-submit {
     width: fit-content;
     min-height: 50px;
     padding: 0 25px;
     border: 0;
-    background: var(--color-text);
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-bg);
     cursor: pointer;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    transition: background var(--transition);
+    transition: background var(--transition), transform var(--transition);
 }
 
 .form-submit:hover {
-    background: var(--color-accent);
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
 }
 
 .form-note {
@@ -796,6 +812,11 @@ textarea:focus-visible {
         height: 360px;
     }
 
+    .hero-image-label {
+        right: 12px;
+        bottom: 12px;
+    }
+
     .portfolio {
         padding-top: 90px;
     }
@@ -896,7 +917,7 @@ textarea:focus-visible {
     }
 }
 
-/* Reduced motion accessibility setting */
+/* Accessibility: respect reduced-motion preferences */
 
 @media (prefers-reduced-motion: reduce) {
     *,
