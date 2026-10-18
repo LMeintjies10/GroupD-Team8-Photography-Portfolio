@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Design tokens: the old :root CSS variables, now Tailwind theme values.
+   They generate classes like bg-bg, text-muted, border-line, font-display. */
+@theme {
+  --color-bg: #171817;
+  --color-paper: #242624;
+  --color-text: #f5f1e8;
+  --color-muted: #b8b8af;
+  --color-accent: #d09a78;
+  --color-accent-hover: #e1b294;
+  --color-line: #383a36;
+  --color-image-bg: #292b29;
+  --color-contact: #222421;
+  --color-input-border: #484a45;
+
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 20px;
+  }
+
+  @media (min-width: 40rem) {
+    html {
+      scroll-padding-top: 90px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
