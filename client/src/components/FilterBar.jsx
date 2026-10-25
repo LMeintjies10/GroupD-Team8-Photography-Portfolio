@@ -1,7 +1,5 @@
-import { categories } from "../data/photos.js";
-
 // Controlled: the parent owns `active`, this just reports clicks.
-export default function FilterBar({ active, onChange }) {
+export default function FilterBar({ categories, active, onChange }) {
   return (
     <div
       role="group"
