@@ -1,5 +1,5 @@
 import Container from "./Container.jsx";
-import { Eyebrow, SectionHeading, TextLink } from "./Ui.jsx";
+import { Eyebrow, SectionHeading, TextLink } from "./ui.jsx";
 
 export default function About() {
   return (

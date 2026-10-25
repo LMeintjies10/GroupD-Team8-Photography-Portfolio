@@ -1,5 +1,5 @@
 import Container from "./Container.jsx";
-import { Eyebrow, SectionHeading } from "./Ui.jsx";
+import { Eyebrow, SectionHeading } from "./ui.jsx";
 
 const controlClass =
   "w-full min-w-0 rounded-none border border-input-border bg-paper px-3.5 py-[13px] text-[13px] text-text placeholder:text-[#aaa99f] focus:border-accent";

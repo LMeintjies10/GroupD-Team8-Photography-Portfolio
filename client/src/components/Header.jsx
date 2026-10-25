@@ -7,7 +7,7 @@ const links = [
   { href: "#about", label: "About" },
 ];
 
-export default function Header({ user, onSignIn, onSignOut }) {
+export default function Header() {
   return (
     <header className="relative z-10 border-b border-line bg-bg" id="home">
       <Container
@@ -35,22 +35,6 @@ export default function Header({ user, onSignIn, onSignOut }) {
           >
             Book a Shoot ↗
           </a>
-
-          <a href="#contact" className="...">Book a Shoot ↗</a>
-
-          {user ? (
-            <span className="flex items-center gap-3 text-[11px] font-semibold">
-              <span className="text-muted">Hi, {user.name}</span>
-              <button type="button" onClick={onSignOut} className="cursor-pointer underline hover:text-accent">
-                Sign out
-              </button>
-            </span>
-          ) : (
-            <button type="button" onClick={onSignIn} className="cursor-pointer text-[11px] font-semibold underline hover:text-accent sm:text-xs">
-              Sign in
-            </button>
-          )}
-
         </nav>
       </Container>
     </header>
