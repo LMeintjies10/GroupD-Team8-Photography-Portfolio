@@ -37,7 +37,7 @@ export default function Hero() {
 
       <div className="group relative h-[360px] overflow-hidden bg-image-bg sm:h-[clamp(280px,49vw,650px)]">
         <img
-          src="/images/Image1.jpg"
+          src="/images/image1.jpg"
           alt="Featured photograph from the FRAME photography collection"
           fetchPriority="high"
           className="size-full object-cover object-[center_47%] transition-transform duration-[800ms] ease-out motion-reduce:transition-none group-hover:scale-[1.025]"
