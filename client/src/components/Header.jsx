@@ -4,8 +4,8 @@ import Container from "./Container.jsx";
 const links = [
   { href: "#home", label: "Home" },
   { href: "#portfolio", label: "Portfolio" },
-  { href: "#about", label: "About" },
   { href: "#packages", label: "Packages" },
+  { href: "#about", label: "About" },
 ];
 
 export default function Header({ user, onSignIn, onSignOut }) {
@@ -31,13 +31,11 @@ export default function Header({ user, onSignIn, onSignOut }) {
           ))}
 
           <a
-            href="#contact"
+            href="#packages"
             className="border border-text px-[11px] py-2 text-[11px] font-semibold transition-colors hover:bg-text hover:text-bg sm:px-[17px] sm:py-3 sm:text-xs"
           >
             Book a Shoot ↗
           </a>
-
-          <a href="#contact" className="...">Book a Shoot ↗</a>
 
           {user ? (
             <span className="flex items-center gap-3 text-[11px] font-semibold">
@@ -51,7 +49,6 @@ export default function Header({ user, onSignIn, onSignOut }) {
               Sign in
             </button>
           )}
-
         </nav>
       </Container>
     </header>

@@ -10,7 +10,7 @@ const EVEN_GRID =
 
 const EVEN_ITEM = "aspect-[4/5] sm:aspect-[4/3]";
 
-export default function Gallery({ photos, filtered, favourites = [], onToggleFavourite, onBuy }) {
+export default function Gallery({ photos, filtered, favourites = [], onToggleFavourite, onBuy, onOpen }) {
   return (
     <div className={filtered ? EVEN_GRID : MOSAIC_GRID}>
       {photos.map((photo) => (
@@ -18,6 +18,7 @@ export default function Gallery({ photos, filtered, favourites = [], onToggleFav
           key={photo.id}
           photo={photo}
           onBuy={onBuy}
+          onOpen={onOpen}
           layoutClass={filtered ? EVEN_ITEM : SIZE_CLASSES[photo.size]}
           isFavourite={favourites.includes(photo.id)}
           onToggleFavourite={onToggleFavourite}

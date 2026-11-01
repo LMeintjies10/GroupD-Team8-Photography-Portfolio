@@ -21,12 +21,25 @@ CREATE TABLE IF NOT EXISTS favorites (
   PRIMARY KEY (user_id, photo_id)
 );
 
--- Extra details for the photo pop-up
-ALTER TABLE photos ADD COLUMN IF NOT EXISTS summary   TEXT NOT NULL DEFAULT '';
-ALTER TABLE photos ADD COLUMN IF NOT EXISTS location  TEXT NOT NULL DEFAULT '';
-ALTER TABLE photos ADD COLUMN IF NOT EXISTS shot_year INTEGER;
-ALTER TABLE photos ADD COLUMN IF NOT EXISTS story     TEXT NOT NULL DEFAULT '';
+-- Extra details for the photo pop-up and the print price
 ALTER TABLE photos ADD COLUMN IF NOT EXISTS price_cents INTEGER NOT NULL DEFAULT 4500;
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS location    TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS taken_on    TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS camera      TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS lens        TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS settings    TEXT NOT NULL DEFAULT '';
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS story       TEXT NOT NULL DEFAULT '';
+
+-- Shoot packages
+CREATE TABLE IF NOT EXISTS packages (
+  id          INTEGER PRIMARY KEY,
+  name        TEXT NOT NULL,
+  description TEXT NOT NULL,
+  duration    TEXT NOT NULL,
+  price_cents INTEGER NOT NULL,
+  features    TEXT[] NOT NULL DEFAULT '{}'
+);
 
 CREATE TABLE IF NOT EXISTS orders (
   id                SERIAL PRIMARY KEY,
@@ -45,3 +58,8 @@ CREATE TABLE IF NOT EXISTS order_items (
   quantity         INTEGER NOT NULL CHECK (quantity > 0),
   unit_price_cents INTEGER NOT NULL
 );
+
+-- An order line can now be a photo print OR a package
+ALTER TABLE order_items ALTER COLUMN photo_id DROP NOT NULL;
+ALTER TABLE order_items ADD COLUMN IF NOT EXISTS package_id INTEGER REFERENCES packages(id);
+ALTER TABLE order_items ADD COLUMN IF NOT EXISTS item_name TEXT;

@@ -6,21 +6,29 @@ import { requireAuth } from "../middleware.js";
 const router = Router();
 
 router.post("/", requireAuth, async (req, res) => {
-  const photoId = Number(req.body.photoId);
-  const quantity = Number(req.body.quantity ?? 1);
-  if (!Number.isInteger(photoId) || !Number.isInteger(quantity) || quantity < 1 || quantity > 10) {
-    return res.status(400).json({ error: "Invalid photo or quantity" });
+  const { type } = req.body;
+  const itemId = Number(req.body.id);
+  const quantity = type === "photo" ? Number(req.body.quantity ?? 1) : 1; // packages are always 1
+
+  if (!["photo", "package"].includes(type) || !Number.isInteger(itemId)) {
+    return res.status(400).json({ error: "Invalid item" });
+  }
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) {
+    return res.status(400).json({ error: "Invalid quantity" });
   }
 
-  // The price comes from OUR database, never from the browser.
-  const { rows } = await pool.query(
-    "SELECT id, title, price_cents FROM photos WHERE id = $1",
-    [photoId]
-  );
-  const photo = rows[0];
-  if (!photo) return res.status(404).json({ error: "Photo not found" });
+  // Price and name come from OUR database, never from the browser.
+  let item;
+  if (type === "photo") {
+    const { rows } = await pool.query("SELECT title, price_cents FROM photos WHERE id = $1", [itemId]);
+    if (rows[0]) item = { name: `Print: ${rows[0].title}`, price: rows[0].price_cents };
+  } else {
+    const { rows } = await pool.query("SELECT name, price_cents FROM packages WHERE id = $1", [itemId]);
+    if (rows[0]) item = { name: `Shoot package: ${rows[0].name}`, price: rows[0].price_cents };
+  }
+  if (!item) return res.status(404).json({ error: "Item not found" });
 
-  const total = photo.price_cents * quantity;
+  const total = item.price * quantity;
 
   const orderRes = await pool.query(
     "INSERT INTO orders (user_id, total_cents) VALUES ($1, $2) RETURNING id",
@@ -29,8 +37,9 @@ router.post("/", requireAuth, async (req, res) => {
   const orderId = orderRes.rows[0].id;
 
   await pool.query(
-    "INSERT INTO order_items (order_id, photo_id, quantity, unit_price_cents) VALUES ($1,$2,$3,$4)",
-    [orderId, photo.id, quantity, photo.price_cents]
+    `INSERT INTO order_items (order_id, photo_id, package_id, item_name, quantity, unit_price_cents)
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+    [orderId, type === "photo" ? itemId : null, type === "package" ? itemId : null, item.name, quantity, item.price]
   );
 
   try {
@@ -41,8 +50,8 @@ router.post("/", requireAuth, async (req, res) => {
           quantity,
           price_data: {
             currency: CURRENCY,
-            unit_amount: photo.price_cents,
-            product_data: { name: `Print: ${photo.title}` },
+            unit_amount: item.price,
+            product_data: { name: item.name },
           },
         },
       ],

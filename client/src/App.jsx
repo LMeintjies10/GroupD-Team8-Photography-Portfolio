@@ -28,14 +28,20 @@ export default function App() {
     setUser(null);
   }
 
+  async function startCheckout(type, id) {
+    if (!user) { setAuthOpen(true); return; }
+    const { url } = await api("/api/checkout", { method: "POST", body: { type, id } });
+    window.location.href = url; // off to Stripe's hosted page
+  }
+
   return (
     <>
       <Header user={user} onSignIn={() => setAuthOpen(true)} onSignOut={signOut} />
         <CheckoutBanner user={user} authChecked={authChecked} />
       <main>
         <Hero />
-        <Portfolio user={user} onRequireAuth={() => setAuthOpen(true)}/>
-        <Packages user={user} onRequireAuth={() => setAuthOpen(true)} />
+        <Portfolio user={user} onRequireAuth={() => setAuthOpen(true)} onCheckout={startCheckout} />
+        <Packages onCheckout={startCheckout} />
         <About />
         <Contact />
       </main>

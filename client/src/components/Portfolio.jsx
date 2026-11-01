@@ -2,46 +2,36 @@ import { useEffect, useState } from "react";
 import Container from "./Container.jsx";
 import FilterBar from "./FilterBar.jsx";
 import Gallery from "./Gallery.jsx";
-import { Eyebrow, SectionHeading, TextLink } from "./ui.jsx";
-import { api, startCheckout } from "../api.js";
 import PhotoModal from "./PhotoModal.jsx";
+import { Eyebrow, SectionHeading, TextLink } from "./ui.jsx";
+import { api } from "../api.js";
 
-export default function Portfolio({ user, onRequireAuth }) {
+export default function Portfolio({ user, onRequireAuth, onCheckout }) {
   const [photos, setPhotos] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | error
   const [activeCategory, setActiveCategory] = useState("All");
-  const [favourites, setFavourites] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-  const selected = photos.find((p) => p.id === selectedId);
+  const [favorites, setFavorites] = useState([]);
+  const [selected, setSelected] = useState(null); // the photo shown in the detail window
 
-  // Load the photos from the API once.
   useEffect(() => {
     api("/api/photos")
       .then((data) => { setPhotos(data); setStatus("ready"); })
       .catch(() => setStatus("error"));
   }, []);
 
-  // Load this user's favourites whenever they sign in or out.
   useEffect(() => {
-    if (!user) { setFavourites([]); return; }
-    api("/api/favourites").then(setFavourites).catch(() => setFavourites([]));
+    if (!user) { setFavorites([]); return; }
+    api("/api/favorites").then(setFavorites).catch(() => setFavorites([]));
   }, [user]);
 
-  async function toggleFavourite(id) {
+  async function toggleFavorite(id) {
     if (!user) return onRequireAuth();
-    const has = favourites.includes(id);
-    await api(`/api/favourites/${id}`, { method: has ? "DELETE" : "PUT" });
+    const has = favorites.includes(id);
+    await api(`/api/favorites/${id}`, { method: has ? "DELETE" : "PUT" });
     setFavorites((current) => (has ? current.filter((x) => x !== id) : [...current, id]));
   }
 
-  async function buy(photo) {
-  if (!user) return onRequireAuth();
-  const { url } = await api("/api/checkout", {
-    method: "POST",
-    body: { photoId: photo.id, quantity: 1 },
-  });
-  window.location.href = url; // off to Stripe's hosted checkout page
-}
+  const buyPrint = (photo) => onCheckout("photo", photo.id);
 
   const categories = ["All", ...new Set(photos.map((p) => p.category))];
   const filtered = activeCategory !== "All";
@@ -61,12 +51,11 @@ export default function Portfolio({ user, onRequireAuth }) {
             Selected <em>frames.</em>
           </SectionHeading>
           <p className="mb-0 mt-[18px] max-w-[380px] text-muted">
-            Different places, different people, one constant: finding something
-            extraordinary in the everyday.
+            Hover a photograph for a quick look, or click it for the full story.
           </p>
         </div>
-        <TextLink href="#contact">
-          Create something together <span aria-hidden="true">↗</span>
+        <TextLink href="#packages">
+          Book a shoot <span aria-hidden="true">↗</span>
         </TextLink>
       </div>
 
@@ -80,10 +69,10 @@ export default function Portfolio({ user, onRequireAuth }) {
           <Gallery
             photos={visiblePhotos}
             filtered={filtered}
-            favourites={favourites}
-            onToggleFavourite={toggleFavourite}
-            onOpen={(photo) => setSelectedId(photo.id)}
-            onBuy={buy}
+            favorites={favorites}
+            onToggleFavorite={toggleFavorite}
+            onBuy={buyPrint}
+            onOpen={setSelected}
           />
 
           <div
@@ -95,19 +84,14 @@ export default function Portfolio({ user, onRequireAuth }) {
                 ? `${visiblePhotos.length} of ${photos.length} frames · ${activeCategory}`
                 : `${photos.length} frames. Countless stories.`}
             </span>
-            <span>
-              {user
-                ? `${favourites.length} favourited`
-                : "Sign in to save favourites"}
-            </span>
+            <span>{user ? `${favorites.length} favourited` : "Sign in to save favourites"}</span>
           </div>
         </>
       )}
 
       {selected && (
-        <PhotoModal photo={selected} onClose={() => setSelectedId(null)} onBuy={buy} />
+        <PhotoModal photo={selected} onClose={() => setSelected(null)} onBuy={buyPrint} />
       )}
-
     </Container>
   );
 }

@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import BuyButton from "./BuyButton.jsx";
+import { money } from "../money.js";
+
+const rows = [
+  ["Location", "location"],
+  ["Date", "taken_on"],
+  ["Camera", "camera"],
+  ["Lens", "lens"],
+  ["Settings", "settings"],
+  ["Category", "category"],
+];
 
 export default function PhotoModal({ photo, onClose, onBuy }) {
-  const [busy, setBusy] = useState(false);
-
-  // Close on Escape, and stop the page behind from scrolling while it's open.
+  // Close on Escape, and stop the page behind from scrolling while open.
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -15,28 +24,17 @@ export default function PhotoModal({ photo, onClose, onBuy }) {
     };
   }, [onClose]);
 
-  async function handleBuy() {
-    setBusy(true);
-    try {
-      await onBuy(photo);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
     <div
       className="fixed inset-0 z-50 overflow-y-auto bg-black/80 p-4 sm:p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="photo-modal-title"
       onClick={onClose}
     >
       <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="photo-title"
+        className="relative mx-auto grid max-w-5xl overflow-hidden border border-line bg-paper md:grid-cols-2"
         onClick={(e) => e.stopPropagation()}
-        className="relative mx-auto grid max-w-[960px] grid-cols-1 border border-line bg-paper md:grid-cols-2"
       >
         <button
           type="button"
@@ -44,51 +42,46 @@ export default function PhotoModal({ photo, onClose, onBuy }) {
           aria-label="Close"
           className="absolute top-3 right-3 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-black/60 text-lg text-white hover:bg-black/80"
         >
-          ×
+          ✕
         </button>
 
         <img
           src={photo.src}
           alt={photo.alt}
-          className="h-[280px] w-full min-w-0 object-cover md:h-full md:min-h-[460px]"
+          className="h-72 w-full object-cover md:h-full md:min-h-[480px]"
         />
 
-        <div className="flex min-w-0 flex-col gap-5 p-6 sm:p-8">
-          <div>
-            <p className="m-0 mb-2 text-[11px] font-bold uppercase tracking-[0.19em] text-accent">
-              {photo.category}
-            </p>
-            <h3 id="photo-title" className="m-0 font-display text-3xl font-medium leading-tight">
-              {photo.title}
-            </h3>
-          </div>
+        <div className="min-w-0 p-6 sm:p-8">
+          <p className="mb-2 mt-0 text-[11px] font-bold uppercase tracking-[0.19em] text-accent">
+            {photo.category}
+          </p>
+          <h2
+            id="photo-modal-title"
+            className="m-0 font-display text-3xl font-medium leading-[1.1] tracking-[-0.03em] sm:text-4xl"
+          >
+            {photo.title}
+          </h2>
 
-          <dl className="m-0 grid grid-cols-2 gap-4 border-y border-line py-4 text-sm">
-            <div>
-              <dt className="text-[11px] uppercase tracking-[0.1em] text-muted">Location</dt>
-              <dd className="m-0 mt-1">{photo.location}</dd>
-            </div>
-            <div>
-              <dt className="text-[11px] uppercase tracking-[0.1em] text-muted">Year</dt>
-              <dd className="m-0 mt-1">{photo.shot_year}</dd>
-            </div>
+          <p className="mb-0 mt-4 text-muted">{photo.description}</p>
+          {photo.story && <p className="mb-0 mt-3 text-muted">{photo.story}</p>}
+
+          <dl className="my-6 grid grid-cols-2 gap-x-4 gap-y-4 border-y border-line py-5 text-sm">
+            {rows.map(([label, key]) =>
+              photo[key] ? (
+                <div key={key} className="min-w-0">
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">{label}</dt>
+                  <dd className="m-0 [overflow-wrap:anywhere]">{photo[key]}</dd>
+                </div>
+              ) : null
+            )}
           </dl>
 
-          <div>
-            <h4 className="m-0 mb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-muted">
-              The story behind it
-            </h4>
-            <p className="m-0 text-sm leading-relaxed text-muted">{photo.story}</p>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <span className="font-display text-3xl">{money(photo.price_cents)}</span>
+            <BuyButton onBuy={() => onBuy(photo)} className="min-h-[46px] px-6">
+              Buy a print
+            </BuyButton>
           </div>
-
-          <button
-            type="button"
-            onClick={handleBuy}
-            disabled={busy}
-            className="mt-auto min-h-[50px] cursor-pointer bg-accent px-6 text-[11px] font-bold uppercase tracking-[0.09em] text-bg transition hover:-translate-y-0.5 hover:bg-accent-hover disabled:opacity-60"
-          >
-            {busy ? "Redirecting..." : `Buy a print · $${(photo.price_cents / 100).toFixed(0)}`}
-          </button>
         </div>
       </div>
     </div>
