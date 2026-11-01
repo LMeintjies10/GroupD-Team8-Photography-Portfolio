@@ -7,14 +7,20 @@ import Contact from "./components/Contact.jsx";
 import Footer from "./components/Footer.jsx";
 import AuthDialog from "./components/AuthDialog.jsx";
 import { api } from "./api.js";
+import Packages from "./components/Packages.jsx";
+import CheckoutBanner from "./components/CheckoutBanner.jsx";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [authOpen, setAuthOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   // On every page load, ask the server who we are. The session cookie is why this survives a refresh.
   useEffect(() => {
-    api("/api/auth/me").then(setUser).catch(() => setUser(null));
+    api("/api/auth/me")
+    .then(setUser)
+    .catch(() => setUser(null))
+    .finally(() => setAuthChecked(true));
   }, []);
 
   async function signOut() {
@@ -25,9 +31,11 @@ export default function App() {
   return (
     <>
       <Header user={user} onSignIn={() => setAuthOpen(true)} onSignOut={signOut} />
+        <CheckoutBanner user={user} authChecked={authChecked} />
       <main>
         <Hero />
         <Portfolio user={user} onRequireAuth={() => setAuthOpen(true)}/>
+        <Packages user={user} onRequireAuth={() => setAuthOpen(true)} />
         <About />
         <Contact />
       </main>

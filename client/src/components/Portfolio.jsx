@@ -3,13 +3,16 @@ import Container from "./Container.jsx";
 import FilterBar from "./FilterBar.jsx";
 import Gallery from "./Gallery.jsx";
 import { Eyebrow, SectionHeading, TextLink } from "./ui.jsx";
-import { api } from "../api.js";
+import { api, startCheckout } from "../api.js";
+import PhotoModal from "./PhotoModal.jsx";
 
 export default function Portfolio({ user, onRequireAuth }) {
   const [photos, setPhotos] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ready | error
   const [activeCategory, setActiveCategory] = useState("All");
   const [favourites, setFavourites] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const selected = photos.find((p) => p.id === selectedId);
 
   // Load the photos from the API once.
   useEffect(() => {
@@ -30,6 +33,15 @@ export default function Portfolio({ user, onRequireAuth }) {
     await api(`/api/favourites/${id}`, { method: has ? "DELETE" : "PUT" });
     setFavorites((current) => (has ? current.filter((x) => x !== id) : [...current, id]));
   }
+
+  async function buy(photo) {
+  if (!user) return onRequireAuth();
+  const { url } = await api("/api/checkout", {
+    method: "POST",
+    body: { photoId: photo.id, quantity: 1 },
+  });
+  window.location.href = url; // off to Stripe's hosted checkout page
+}
 
   const categories = ["All", ...new Set(photos.map((p) => p.category))];
   const filtered = activeCategory !== "All";
@@ -70,6 +82,8 @@ export default function Portfolio({ user, onRequireAuth }) {
             filtered={filtered}
             favourites={favourites}
             onToggleFavourite={toggleFavourite}
+            onOpen={(photo) => setSelectedId(photo.id)}
+            onBuy={buy}
           />
 
           <div
@@ -89,6 +103,11 @@ export default function Portfolio({ user, onRequireAuth }) {
           </div>
         </>
       )}
+
+      {selected && (
+        <PhotoModal photo={selected} onClose={() => setSelectedId(null)} onBuy={buy} />
+      )}
+
     </Container>
   );
 }

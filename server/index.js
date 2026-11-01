@@ -5,12 +5,18 @@ import cookieParser from "cookie-parser";
 import photos from "./routes/photos.js";
 import auth from "./routes/auth.js";
 import favourites from "./routes/favourites.js";
+import checkout from "./routes/checkout.js";
+import orders from "./routes/orders.js";
+import webhook from "./routes/webhook.js";
 
 const app = express();
 app.set("trust proxy", 1); // behind Railway's proxy
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use("/api/webhook", webhook);
 app.use(express.json());
 app.use(cookieParser());
+app.use("/api/checkout", checkout);
+app.use("/api/orders", orders);
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 app.use("/api/photos", photos);
