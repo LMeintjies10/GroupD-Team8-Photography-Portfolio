@@ -47,7 +47,7 @@ export default function CheckoutBanner({ user, authChecked }) {
   if (result === "cancelled") message = "Checkout cancelled. You haven't been charged.";
   else if (state === "paid")
     message = `Payment confirmed. Order #${order.id} is paid (${money(order.total_cents)}): ${order.items
-      .map((i) => `${i.quantity} × ${i.title}`)
+      .map((i) => `${i.quantity} × ${i.item_name}`)
       .join(", ")}.`;
   else if (state === "pending") message = "Payment received. We're still confirming it, so refresh in a moment.";
   else if (state === "signin") message = "Sign in to see your order.";

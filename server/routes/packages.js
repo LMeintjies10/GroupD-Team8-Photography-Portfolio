@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const { rows } = await pool.query(
-    "SELECT id, name, description, duration, includes, price_cents FROM packages ORDER BY id"
+    "SELECT id, name, description, duration, price_cents, features FROM packages ORDER BY id"
   );
   res.json(rows);
 });

@@ -16,9 +16,7 @@ router.get("/:id", requireAuth, async (req, res) => {
   if (!rows[0]) return res.status(404).json({ error: "Order not found" });
 
   const items = await pool.query(
-    `SELECT p.title, oi.quantity, oi.unit_price_cents
-       FROM order_items oi JOIN photos p ON p.id = oi.photo_id
-      WHERE oi.order_id = $1`,
+    "SELECT item_name, quantity, unit_price_cents FROM order_items WHERE order_id = $1",
     [id]
   );
   res.json({ ...rows[0], items: items.rows });
